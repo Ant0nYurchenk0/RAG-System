@@ -54,6 +54,8 @@ pip install -r requirements.txt
 
 ```
 
+You will also need an OpenAI API key. Create an "openai_key.txt" file, put a key in there and save the file to project root directory.
+
 ---
 
 ## Run The App
