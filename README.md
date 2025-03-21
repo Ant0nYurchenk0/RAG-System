@@ -53,7 +53,9 @@ For this project I use a range of dependencies that are stored in the ```require
 pip install -r requirements.txt
 
 ```
+
 ---
+
 ## Run The App
 Each module is contained within it's corresponding folder and should be launched separately. For this use 
 ```bash
@@ -65,8 +67,10 @@ The list of modules:
 - ```RAG.respond_to_query```
 - ```UI.web_app```
 
-Important: these scripts should be run as modules from the root folder of the project
+**Important: these scripts should be run as modules from the root folder of the project**
+
 ---
+
 ## The Flow
 The complete flow of the apllication is as follows:
 1. First, we need to scrape data from the Deeplearning.AI website. For this run the ```Data.collect_data``` script. It collects data from articles on the website, extracts exact topics and images, and stores it in an SQLite database/
