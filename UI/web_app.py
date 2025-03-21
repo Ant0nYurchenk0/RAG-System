@@ -61,7 +61,7 @@ HTML = """
                         <div class="row">
                             {% for image in images %}
                                 <div class="col-6 mb-3">
-                                    <img src="{{ image }}" class="img-fluid rounded shadow-sm" />
+                                    <img src="{{ image[0] }}" class="img-fluid rounded shadow-sm" />
                                 </div>
                             {% endfor %}
                         </div>
