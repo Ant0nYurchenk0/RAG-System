@@ -7,8 +7,8 @@ from RAG.ResponseGenerator import get_context, respond_to_query
 
 app = Flask(__name__)
 app.secret_key = "supersecret"
-text_index = faiss.read_index(IMAGE_INDEX_PATH)
-image_index = faiss.read_index(TEXT_INDEX_PATH)
+text_index = faiss.read_index(TEXT_INDEX_PATH)
+image_index = faiss.read_index(IMAGE_INDEX_PATH)
 
 HTML = """
 <!DOCTYPE html>
@@ -25,12 +25,18 @@ HTML = """
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h3 class="card-title text-center mb-4">RAG with Deeplearning.AI's The Batch and ChatGPT</h3>
-                    <form method="POST">
+                    <form method="POST" onsubmit="showSpinner()">
                         <div class="mb-3">
-                            <input type="text" name="user_query" class="form-control" placeholder="Enter your query..." required>
+                            <input type="text" name="user_query" class="form-control" placeholder="{%if user_query%}{{user_query}}{%else%}Enter your query...{%endif%}" required>
                         </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                        <div class="text-center mt-3" id="spinner" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Processing...</p>
                         </div>
                     </form>
                     {% if result %}
@@ -45,6 +51,7 @@ HTML = """
                         {% for article in articles %}
                             <h6>{{ article[0] }}</h6>
                             <p>{{ article[1] }}</p>
+                            <a href="{{article[2]}}" class="btn btn-primary">Explore</a>
                         {% endfor %}
                     {% endif %}
 
@@ -64,7 +71,11 @@ HTML = """
         </div>
     </div>
 </div>
-
+<script>
+    function showSpinner() {
+        document.getElementById("spinner").style.display = "block";
+    }
+</script>
 </body>
 </html>
 """
@@ -72,6 +83,7 @@ HTML = """
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    user_query = None
     response = None
     articles = None
     images = None
@@ -84,9 +96,7 @@ def index():
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         joined_article_ids = ",".join([str(id) for id in text_ids])
-        sql_article = (
-            f"SELECT title, content FROM articles WHERE id IN ({joined_article_ids})"
-        )
+        sql_article = f"SELECT title, content, url FROM articles WHERE id IN ({joined_article_ids})"
         articles = cursor.execute(sql_article).fetchall()
 
         joined_image_ids = ",".join([str(id) for id in image_ids])
@@ -94,7 +104,7 @@ def index():
         images = cursor.execute(sql_images).fetchall()
 
     return render_template_string(
-        HTML, result=response, articles=articles, images=images
+        HTML, result=response, articles=articles, images=images, user_query=user_query
     )
 
 

@@ -17,18 +17,16 @@ def get_context(query, text_index, image_index):
     k = 3
 
     text_distances, text_ids = text_index.search(text_embedding, k)
-    # if text_distances[0][0] > 1.5:
-    #     return None, None
+    texts = [id for id, dist in zip(text_ids[0], text_distances[0]) if dist <= 1.2]
 
     image_distances, image_ids = image_index.search(text_embedding, k)
-    # if image_distances[0][0] > 1.5:
-    #     return text_distances, None
+    images = [id for id, dist in zip(image_ids[0], image_distances[0]) if dist <= 1.2]
 
-    return text_ids[0], image_ids[0]
+    return texts, images
 
 
 def respond_to_query(query, text_ids, image_ids):
-    if text_ids is None:
+    if text_ids is None or len(text_ids) == 0:
         return "Sorry, I couldn't find any relevant articles"
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -55,7 +53,7 @@ def respond_to_query(query, text_ids, image_ids):
     content = [
         {
             "type": "text",
-            "text": "You are being used in a RAG system that retrieves an answer to a query based solely on the relevant articles and images provided. Give only the answer that can be shown to the end user",
+            "text": "You are being used in a RAG system that retrieves an answer to a query based solely on the relevant articles and images provided. Give only the answer that can be shown to the end user with no text formatting",
         },
         {
             "type": "text",

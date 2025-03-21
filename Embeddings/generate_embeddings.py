@@ -8,8 +8,6 @@ from Embeddings.EmbeddingsGenerator import (
 
 
 def main():
-    image_path = IMAGE_INDEX_PATH
-    text_path = TEXT_INDEX_PATH
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
@@ -17,10 +15,10 @@ def main():
     images = cursor.execute("SELECT id, summary FROM images").fetchall()
 
     save_embeddingds(
-        [text[1] for text in texts], [text[0] for text in texts], text_path
+        [text[1] for text in texts], [text[0] for text in texts], TEXT_INDEX_PATH
     )
     save_embeddingds(
-        [image[1] for image in images], [image[0] for image in images], image_path
+        [image[1] for image in images], [image[0] for image in images], IMAGE_INDEX_PATH
     )
 
 
