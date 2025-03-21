@@ -68,8 +68,6 @@ def save_sections_to_db(sections, db_path=DB_PATH):
         );
         """
     )
-    cursor.execute("DELETE FROM articles")
-    cursor.execute("DELETE FROM images")
 
     text_data = [
         (title, " ".join(content), url)
