@@ -5,6 +5,7 @@ from Embeddings import EmbeddingsGenerator as eg
 
 ARTICLE_DIR_NAME = "articles"
 IMAGE_DIR_NAME = "images"
+DB_PATH = "batch_articles.db"
 
 EXCLUDE_TITLES = {
     "a_message_fromdeeplearningai",
@@ -43,7 +44,7 @@ def ensure_directories(base_path):
     return articles_path, images_path
 
 
-def save_sections_to_db(sections, db_path="batch_articles.db"):
+def save_sections_to_db(sections, db_path=DB_PATH):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 

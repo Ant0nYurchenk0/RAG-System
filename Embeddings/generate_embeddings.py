@@ -1,10 +1,10 @@
 import sqlite3
-import os
-from Embeddings.EmbeddingsGenerator import save_embeddingds
-
-DB_PATH = "batch_articles.db"
-IMAGE_IDEX_PATH = "image_index.index"
-TEXT_INDEX_PATH = "text_index.index"
+from Data.DataSaver import DB_PATH
+from Embeddings.EmbeddingsGenerator import (
+    IMAGE_IDEX_PATH,
+    TEXT_INDEX_PATH,
+    save_embeddingds,
+)
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    texts = cursor.execute("SELECT id, title, content FROM articles").fetchall()
+    texts = cursor.execute("SELECT id, content FROM articles").fetchall()
     images = cursor.execute("SELECT id, summary FROM images").fetchall()
 
     save_embeddingds(
