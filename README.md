@@ -1,4 +1,4 @@
-# 📰 Multimodal RAG System for News Retrieval from The Batch
+# Multimodal RAG System for News Retrieval from The Batch
 
 This project implements a **Multimodal Retrieval-Augmented Generation (RAG)** system that retrieves relevant articles from [The Batch](https://www.deeplearning.ai/the-batch/), incorporating both **textual** and **visual data**. Users can input queries to search for news, and the system retrieves related articles along with associated images using a hybrid vector-based retrieval mechanism and language generation models.
 
@@ -53,7 +53,8 @@ For this project I use a range of dependencies that are stored in the ```require
 pip install -r requirements.txt
 
 ```
-## Run the app
+---
+## Run The App
 Each module is contained within it's corresponding folder and should be launched separately. For this use 
 ```bash
 python -m <module-name>
@@ -65,8 +66,8 @@ The list of modules:
 - ```UI.web_app```
 
 Important: these scripts should be run as modules from the root folder of the project
-
-## The flow
+---
+## The Flow
 The complete flow of the apllication is as follows:
 1. First, we need to scrape data from the Deeplearning.AI website. For this run the ```Data.collect_data``` script. It collects data from articles on the website, extracts exact topics and images, and stores it in an SQLite database/
 2. Then, we want to create a FAISS indexes for embedding vector search. For this launch the ```Embeddings.generate_embeddings``` script
