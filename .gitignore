@@ -172,3 +172,12 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Dataset
+Data/articles
+Data/images
+*.db
+*.index
+
+#api key
+openai_key.txt
