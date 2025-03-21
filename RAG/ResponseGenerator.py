@@ -13,7 +13,7 @@ def get_context(query, text_index, image_index):
     text_model = SentenceTransformer("paraphrase-mpnet-base-v2")
 
     text_embedding = text_model.encode([query], convert_to_numpy=True)
-    # faiss.normalize_L2(text_embedding)
+    faiss.normalize_L2(text_embedding)
     k = 3
 
     text_distances, text_ids = text_index.search(text_embedding, k)
@@ -27,18 +27,46 @@ def get_context(query, text_index, image_index):
     return text_ids[0], image_ids[0]
 
 
-def respond_to_query(query, text_ids):
+def respond_to_query(query, text_ids, image_ids):
     if text_ids is None:
         return "Sorry, I couldn't find any relevant articles"
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    joined_ids = ",".join([str(id) for id in text_ids])
-    sql = f"SELECT content FROM articles WHERE id IN ({joined_ids})"
-    articles = cursor.execute(sql).fetchall()
-
+    joined_article_ids = ",".join([str(id) for id in text_ids])
+    sql_article = f"SELECT content FROM articles WHERE id IN ({joined_article_ids})"
+    articles = cursor.execute(sql_article).fetchall()
     joined_articles = "\n--------\n".join([article[0] for article in articles])
-    api_key = read_api_key(API_KEY_PATH)
 
+    joined_image_ids = ",".join([str(id) for id in image_ids])
+    sql_images = f"SELECT url FROM images WHERE id IN ({joined_image_ids})"
+    images = cursor.execute(sql_images).fetchall()
+
+    api_key = read_api_key(API_KEY_PATH)
+    image_obj = [
+        {
+            "type": "image_url",
+            "image_url": {
+                "url": image[0],
+            },
+        }
+        for image in images
+    ]
+
+    content = [
+        {
+            "type": "text",
+            "text": "You are being used in a RAG system that retrieves an answer to a query based solely on the relevant articles and images provided. Give only the answer that can be shown to the end user",
+        },
+        {
+            "type": "text",
+            "text": f"The relevant articles are: {joined_articles}",
+        },
+        {
+            "type": "text",
+            "text": f"The user asks for an answer to the query: {query}",
+        },
+    ]
+    content.extend(image_obj)
     client = OpenAI(
         api_key=api_key,
     )
@@ -47,20 +75,7 @@ def respond_to_query(query, text_ids):
         messages=[
             {
                 "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": "You are being used in a RAG system that retrieves an answer to a query based solely on the relevant articles provided",
-                    },
-                    {
-                        "type": "text",
-                        "text": f"The relevant articles are: {joined_articles}",
-                    },
-                    {
-                        "type": "text",
-                        "text": f"The user asks for an answer to the query: {query}",
-                    },
-                ],
+                "content": content,
             }
         ],
     )

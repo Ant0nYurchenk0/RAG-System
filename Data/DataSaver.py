@@ -68,8 +68,11 @@ def save_sections_to_db(sections, db_path=DB_PATH):
         );
         """
     )
+    cursor.execute("DELETE FROM articles")
+    cursor.execute("DELETE FROM images")
+
     text_data = [
-        (title, "\n".join(content), url)
+        (title, " ".join(content), url)
         for title, _, content, url in sections[1:]
         if safe_filename(title) not in EXCLUDE_TITLES
     ]
@@ -79,7 +82,7 @@ def save_sections_to_db(sections, db_path=DB_PATH):
     image_data = [
         (
             images[0],
-            eg.get_image_summary(images[0], "\n".join(["\n".join(content), title])),
+            eg.get_image_summary(images[0], " .".join([title, " ".join(content)])),
         )
         for title, images, content, _ in sections[1:]
         if safe_filename(title) not in EXCLUDE_TITLES and images

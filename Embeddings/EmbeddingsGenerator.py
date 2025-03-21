@@ -5,7 +5,7 @@ from openai import OpenAI
 
 API_KEY_PATH = "openai_key.txt"
 
-IMAGE_IDEX_PATH = "image_index.index"
+IMAGE_INDEX_PATH = "image_index.index"
 TEXT_INDEX_PATH = "text_index.index"
 
 
@@ -19,14 +19,14 @@ def save_embeddingds(texts, ids, path):
     model = SentenceTransformer("paraphrase-mpnet-base-v2")
 
     embeddings = model.encode(texts, convert_to_numpy=True)
-    # faiss.normalize_L2(embeddings)
+    faiss.normalize_L2(embeddings)
 
     dimension = embeddings.shape[1]
     index = faiss.IndexFlatL2(dimension)
     index_with_ids = faiss.IndexIDMap(index)
 
     embedding_ids = np.array(ids).astype("int64")
-    index_with_ids.add_with_ids(x=embeddings, xids=embedding_ids)
+    index_with_ids.add_with_ids(embeddings, embedding_ids)
 
     faiss.write_index(index_with_ids, path)
 

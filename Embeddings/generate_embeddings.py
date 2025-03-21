@@ -1,14 +1,14 @@
 import sqlite3
 from Data.DataSaver import DB_PATH
 from Embeddings.EmbeddingsGenerator import (
-    IMAGE_IDEX_PATH,
+    IMAGE_INDEX_PATH,
     TEXT_INDEX_PATH,
     save_embeddingds,
 )
 
 
 def main():
-    image_path = IMAGE_IDEX_PATH
+    image_path = IMAGE_INDEX_PATH
     text_path = TEXT_INDEX_PATH
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()

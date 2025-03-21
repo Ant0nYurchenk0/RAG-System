@@ -28,7 +28,7 @@ def main():
 
         sections = parse_article_sections(response.content, full_url)
         save_sections_to_db(sections)
-        save_sections_to_files(sections, articles_path, images_path)
+        # save_sections_to_files(sections, articles_path, images_path)
         time.sleep(1)
 
 
